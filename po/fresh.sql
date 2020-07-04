@@ -2,15 +2,15 @@
 Navicat MySQL Data Transfer
 
 Source Server         : reol
-Source Server Version : 50514
+Source Server Version : 50556
 Source Host           : localhost:3306
 Source Database       : fresh
 
 Target Server Type    : MYSQL
-Target Server Version : 50514
+Target Server Version : 50556
 File Encoding         : 65001
 
-Date: 2020-07-03 22:35:15
+Date: 2020-07-04 10:14:38
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -28,27 +28,6 @@ CREATE TABLE `administrator` (
 
 -- ----------------------------
 -- Records of administrator
--- ----------------------------
-
--- ----------------------------
--- Table structure for comment
--- ----------------------------
-DROP TABLE IF EXISTS `comment`;
-CREATE TABLE `comment` (
-  `product_id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `comment_content` varchar(400) DEFAULT NULL,
-  `comment_date` date NOT NULL,
-  `star` int(11) NOT NULL,
-  `photo` longblob,
-  PRIMARY KEY (`product_id`,`user_id`),
-  KEY `FK_comment2` (`user_id`),
-  CONSTRAINT `FK_comment2` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`),
-  CONSTRAINT `FK_comment` FOREIGN KEY (`product_id`) REFERENCES `product` (`product_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- ----------------------------
--- Records of comment
 -- ----------------------------
 
 -- ----------------------------
@@ -139,6 +118,8 @@ CREATE TABLE `dorder` (
   `real_money` float(8,2) NOT NULL,
   `req_time` time NOT NULL,
   `state` int(11) NOT NULL,
+  `star` int(11) DEFAULT NULL,
+  `comment` varchar(400) DEFAULT NULL,
   PRIMARY KEY (`order_id`),
   KEY `FK_Relationship_1` (`user_id`),
   KEY `FK_Relationship_5` (`add_id`),
@@ -173,19 +154,33 @@ CREATE TABLE `fresh_category` (
 DROP TABLE IF EXISTS `menu`;
 CREATE TABLE `menu` (
   `menu_id` int(11) NOT NULL,
-  `product_id` int(11) DEFAULT NULL,
   `menu_name` varchar(40) NOT NULL,
   `menu_make` varchar(200) NOT NULL,
   `menu_step` varchar(500) NOT NULL,
   `image` longblob,
-  `decribe` varchar(200) DEFAULT NULL,
-  PRIMARY KEY (`menu_id`),
-  KEY `FK_menu_recomment` (`product_id`),
-  CONSTRAINT `FK_menu_recomment` FOREIGN KEY (`product_id`) REFERENCES `product` (`product_id`)
+  PRIMARY KEY (`menu_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of menu
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for menu_recomment
+-- ----------------------------
+DROP TABLE IF EXISTS `menu_recomment`;
+CREATE TABLE `menu_recomment` (
+  `product_id` int(11) NOT NULL,
+  `menu_id` int(11) NOT NULL,
+  `decribe` varchar(200) DEFAULT NULL,
+  PRIMARY KEY (`product_id`,`menu_id`),
+  KEY `FK_menu_recomment2` (`menu_id`),
+  CONSTRAINT `FK_menu_recomment2` FOREIGN KEY (`menu_id`) REFERENCES `menu` (`menu_id`),
+  CONSTRAINT `FK_menu_recomment` FOREIGN KEY (`product_id`) REFERENCES `product` (`product_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of menu_recomment
 -- ----------------------------
 
 -- ----------------------------
@@ -197,8 +192,6 @@ CREATE TABLE `order_details` (
   `order_id` int(11) NOT NULL,
   `quantity` int(11) DEFAULT NULL,
   `price` float(8,2) DEFAULT NULL,
-  `deduce` float DEFAULT NULL,
-  `discount_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`product_id`,`order_id`),
   KEY `FK_order_details2` (`order_id`),
   CONSTRAINT `FK_order_details2` FOREIGN KEY (`order_id`) REFERENCES `dorder` (`order_id`),
@@ -215,11 +208,14 @@ CREATE TABLE `order_details` (
 DROP TABLE IF EXISTS `procure`;
 CREATE TABLE `procure` (
   `produre` int(11) NOT NULL,
+  `ad_id` int(11) DEFAULT NULL,
   `product_id` int(11) DEFAULT NULL,
   `quantity` int(11) NOT NULL,
   `state` int(11) NOT NULL,
   PRIMARY KEY (`produre`),
   KEY `FK_Relationship_6` (`product_id`),
+  KEY `FK_Relationship_8` (`ad_id`),
+  CONSTRAINT `FK_Relationship_8` FOREIGN KEY (`ad_id`) REFERENCES `administrator` (`ad_id`),
   CONSTRAINT `FK_Relationship_6` FOREIGN KEY (`product_id`) REFERENCES `product` (`product_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
